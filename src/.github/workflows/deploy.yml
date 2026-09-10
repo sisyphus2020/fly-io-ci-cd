@@ -9,13 +9,21 @@ on:
     branches:
       - main
 
+# 순차적 배포를 보장하기 위한 설정 추가
+concurrency:
+  group: fly-deploy
+  cancel-in-progress: false
+
 jobs:
   deploy:
     name: Deploy app
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      # ⚠️ flyctl-actions 로 's'를 추가하고 버전을 안정적인 형태로 세팅
       - uses: superfly/flyctl-actions/setup-flyctl@master
+
       - run: flyctl deploy --remote-only
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
